@@ -107,6 +107,7 @@ def remove_friend():
         print '%d. %s aged %d with rating %.2f is online' % (item_number + 1, friend.name, friend.age, friend.rating)
         item_number = item_number + 1
 
+    return len(friends)
 
 # method to select a spy
 def select_friend():
@@ -155,13 +156,16 @@ def read_message():
 
     new_chat = ChatMssg(secret_text,False)
 
-    friends[sender].chats.append(new_chat)
-
-    print "Your secret message is \n" + secret_text
-
     if secret_text in SPECIAL_MESSAGES:
 
         print "we are on our way to help"
+
+    try:
+        secret_text = Steganography.decode(output_path)
+        if secret_text > 0:
+            print "Your secret message is \n" + secret_text
+    except:
+        print "there is no message"
 
 
 # method to read chat history
