@@ -68,6 +68,19 @@ def add_spy_status():
     return updated_status_mssge
 
 
+# method to print friends number
+def total_spy_friend():
+    if len(friends) != 0:
+        item_number = 0
+        print 'your friends are:'
+        for friend in friends:
+            print '%d. %s %s rating %d and age %.2f is online' % (item_number + 1, friend.salutation, friend.name,
+                                                                friend.age, friend.rating)
+            item_number = item_number + 1
+    else:
+        return
+    return
+
 # method to add a spy
 def add_spy_friend():
 
@@ -76,8 +89,6 @@ def add_spy_friend():
 
     new_spy_friend.name = raw_input(colored("Please add your friend's name:", 'red'))
     new_spy_friend.salutation = raw_input(colored("Are they Mr. or Ms.?: ", 'red'))
-
-    new_spy_friend.name = new_spy_friend.salutation + " " + new_spy_friend.name
 
     new_spy_friend.age = raw_input(colored("Age?", 'red'))
     new_spy_friend.age = int(new_spy_friend.age)
@@ -88,6 +99,7 @@ def add_spy_friend():
     if len(new_spy_friend.name) > 0 and new_spy_friend.age > 12 and new_spy_friend.rating >= spy.rating:
         friends.append(new_spy_friend)
         print colored('Friend Added', 'red')
+        total_spy_friend()
     else:
         print colored('Sorry! Invalid entry. We can\'t add spy with the details you provided', 'red')
 
@@ -100,11 +112,12 @@ def remove_spy_friend():
     friend_choice = select_friend()
 
     del friends[friend_choice]
-
+    print "Remaining friends are:"
     item_number = 0
 
     for friend in friends:
-        print '%d. %s aged %d with rating %.2f is online' % (item_number + 1, friend.name, friend.age, friend.rating)
+        print '%d. %s %s aged %d with rating %.2f is online' % (item_number + 1, friend.salutation, friend.name,
+                                                                friend.age, friend.rating)
         item_number = item_number + 1
 
     return len(friends)
@@ -115,8 +128,8 @@ def select_friend():
     item_number = 0
 
     for friend in friends:
-        print '%d. %s  %s aged %d with rating %.2f is online' % (item_number + 1, friend.name, friend.salutation,
-                                                                  friend.rating, friend.age)
+        print '%d. %s %s aged %d with rating %.2f is online' % (item_number + 1, friend.salutation, friend.name,
+                                                                     friend.age, friend.rating)
         item_number = item_number + 1
 
     friend_choice = raw_input(colored("Choose from your friends", 'red'))
@@ -172,7 +185,7 @@ def read_message():
     if secret_text.upper() in SPECIAL_MESSAGES:
         print "We are on our way to help you"
 
-    if(len(secret_text.split(" "))) >100:
+    if(len(secret_text.split(" "))) > 100:
         print "This spy" + friends[sender].name + "was talking too much,therefore will be deleted from the list "
         del friends[sender]
 
@@ -211,9 +224,9 @@ def start_chat(spy):
         # while loop
         while show_menu:
 
-            menu_choices = "What do you want to do? \n 1. Add a status update \n 2. Add a friend \n " \
-                           "3. remove a friend \n 4. Send a secret message \n 5. Read a secret message \n" \
-                           " 6. Read Chats from a user \n 7. Close Application \n "
+            menu_choices = "What do you want to do? \n 1. Add a status update \n 2. See friend \n 3. Add a friend \n " \
+                           "4. remove a friend \n 5. Send a secret message \n 6. Read a secret message \n" \
+                           " 7. Read Chats from a user \n 8. Close Application \n "
 
             menu_choice = raw_input(menu_choices)
 
@@ -224,15 +237,17 @@ def start_chat(spy):
                 if menu_choice == 1:
                     spy.current_status_mssge = add_spy_status()
                 elif menu_choice == 2:
+                    total_spy_friend()
+                elif menu_choice == 3:
                     number_of_friends = add_spy_friend()
                     print 'You have %d friends' % number_of_friends
-                elif menu_choice == 3:
-                    number_of_friends = remove_spy_friend()
                 elif menu_choice == 4:
-                    send_message()
+                    number_of_friends = remove_spy_friend()
                 elif menu_choice == 5:
-                    read_message()
+                    send_message()
                 elif menu_choice == 6:
+                    read_message()
+                elif menu_choice == 7:
                     read_chat_history()
                 else:
                     show_menu = False
@@ -277,10 +292,17 @@ else:
         # nested if-else
         if spy.rating > 4.5:
             print colored('Great ace!', 'red')
+
+        # other way to write
+        # elif 3.5 < spy.rating <= 4.5
         elif spy.rating > 3.5 and spy.rating <= 4.5:
             print colored('You are one of the good ones.', 'red')
+
+        # other way to write
+        # elif 2.5 <= spy.rating <= 3.5
         elif spy.rating >= 2.5 and spy.rating <= 3.5:
             print colored('You can always do better', 'red')
+
         else:
             print colored('We can always use somebody to help in the office.', 'red')
 
