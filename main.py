@@ -36,14 +36,14 @@ def add_spy_status():
     default = raw_input(colored("Do you want to select from the older status (Y/N)? ", 'red'))
 
     if default.upper() == "N":
-        new_status_message = raw_input(colored("what status message do you want to set?", 'red', 'on_grey'))
+        spy_new_status_message = raw_input(colored("what status message do you want to set?", 'red', 'on_grey'))
 
-        if len(new_status_message) > 0:
-            if new_status_message.decode('utf-8').isspace():
+        if len(spy_new_status_message) > 0:
+            if spy_new_status_message.decode('utf-8').isspace():
                 updated_status_mssge = None
             else:
-                STATUS_MSSGS.append(new_status_message)
-                updated_status_mssge = new_status_message
+                STATUS_MSSGS.append(spy_new_status_message)
+                updated_status_mssge = spy_new_status_message
 
     elif default.upper() == "Y":
 
@@ -53,10 +53,10 @@ def add_spy_status():
             print '%d. %s' % (item_position, message)
             item_position = item_position + 1
 
-        message_selection = int(raw_input(colored("\n Choose from the above messages ", 'red', 'on_grey')))
+        old_message_selection = int(raw_input(colored("\n Choose from the above messages ", 'red', 'on_grey')))
 
-        if len(STATUS_MSSGS) >= message_selection:
-            updated_status_mssge = STATUS_MSSGS[message_selection-1]
+        if len(STATUS_MSSGS) >= old_message_selection:
+            updated_status_mssge = STATUS_MSSGS[old_message_selection-1]
     else:
         print colored('The option you chose is not valid! Press either y or n.', 'red')
 
@@ -69,24 +69,24 @@ def add_spy_status():
 
 
 # method to add a spy
-def add_friend():
+def add_spy_friend():
 
     # Spy is a class
-    new_friend = Spy('', '', 0, 0.0)
+    new_spy_friend = Spy('', '', 0, 0.0)
 
-    new_friend.name = raw_input(colored("Please add your friend's name:", 'red'))
-    new_friend.salutation = raw_input(colored("Are they Mr. or Ms.?: ", 'red'))
+    new_spy_friend.name = raw_input(colored("Please add your friend's name:", 'red'))
+    new_spy_friend.salutation = raw_input(colored("Are they Mr. or Ms.?: ", 'red'))
 
-    new_friend.name = new_friend.salutation + " " + new_friend.name
+    new_spy_friend.name = new_spy_friend.salutation + " " + new_spy_friend.name
 
-    new_friend.age = raw_input(colored("Age?", 'red'))
-    new_friend.age = int(new_friend.age)
+    new_spy_friend.age = raw_input(colored("Age?", 'red'))
+    new_spy_friend.age = int(new_spy_friend.age)
 
-    new_friend.rating = raw_input(colored("Spy rating?", 'red'))
-    new_friend.rating = float(new_friend.rating)
+    new_spy_friend.rating = raw_input(colored("Spy rating?", 'red'))
+    new_spy_friend.rating = float(new_spy_friend.rating)
 
-    if len(new_friend.name) > 0 and new_friend.age > 12 and new_friend.rating >= spy.rating:
-        friends.append(new_friend)
+    if len(new_spy_friend.name) > 0 and new_spy_friend.age > 12 and new_spy_friend.rating >= spy.rating:
+        friends.append(new_spy_friend)
         print colored('Friend Added', 'red')
     else:
         print colored('Sorry! Invalid entry. We can\'t add spy with the details you provided', 'red')
@@ -95,7 +95,7 @@ def add_friend():
 
 
 # method to remove a spy
-def remove_friend():
+def remove_spy_friend():
 
     friend_choice = select_friend()
 
@@ -108,6 +108,7 @@ def remove_friend():
         item_number = item_number + 1
 
     return len(friends)
+
 
 # method to select a spy
 def select_friend():
@@ -132,17 +133,21 @@ def send_message():
 
     original_image = raw_input(colored("What is the name of the image?", 'red'))
 
-    output_path = "output.jpg"
+    output_path = "bond.jpg"
 
     text = raw_input(colored("What do you want to say? ", 'red'))
 
-    Steganography.encode(original_image, output_path, text)
+    try:
+        Steganography.encode(original_image, output_path, text)
+    except:
+        print colored("Problem in encoding \n", 'red')
+        return
 
     new_chat = ChatMssg(text,True)
 
     friends[friend_choice].chats.append(new_chat)
 
-    print colored("Your secret message is ready!", 'red', 'on_grey')
+    print colored("Your secret message is safe now!", 'red', 'on_grey')
 
 
 # method to read message
@@ -150,22 +155,26 @@ def read_message():
 
     sender = select_friend()
 
-    output_path = raw_input(colored("What is the name of the file?", 'red'))
-
-    secret_text = Steganography.decode(output_path)
-
-    new_chat = ChatMssg(secret_text,False)
-
-    if secret_text in SPECIAL_MESSAGES:
-
-        print "we are on our way to help"
+    output_path = raw_input(colored("Name of the file?", 'red'))
 
     try:
         secret_text = Steganography.decode(output_path)
-        if secret_text > 0:
-            print "Your secret message is \n" + secret_text
     except:
-        print "there is no message"
+        print ("not a valid message")
+        return
+
+    new_chat = ChatMssg(secret_text, False)
+
+    friends[sender].chats.append(new_chat)
+
+    print "The secret message is : \n" + secret_text
+
+    if secret_text.upper() in SPECIAL_MESSAGES:
+        print "We are on our way to help you"
+
+    if(len(secret_text.split(" "))) >100:
+        print "This spy" + friends[sender].name + "was talking too much,therefore will be deleted from the list "
+        del friends[sender]
 
 
 # method to read chat history
@@ -215,10 +224,10 @@ def start_chat(spy):
                 if menu_choice == 1:
                     spy.current_status_mssge = add_spy_status()
                 elif menu_choice == 2:
-                    number_of_friends = add_friend()
+                    number_of_friends = add_spy_friend()
                     print 'You have %d friends' % number_of_friends
                 elif menu_choice == 3:
-                    number_of_friends = remove_friend()
+                    number_of_friends = remove_spy_friend()
                 elif menu_choice == 4:
                     send_message()
                 elif menu_choice == 5:
